@@ -4,6 +4,7 @@ import (
 	"database/sql"
 
 	"github.com/IsaqueAmorim/rinha-2023/internal/infra/database/config"
+	_ "github.com/lib/pq"
 )
 
 var db *sql.DB
