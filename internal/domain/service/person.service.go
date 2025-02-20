@@ -7,10 +7,6 @@ import (
 
 func CreatePerson(p *entity.Person) (string, error) {
 
-	if err := p.Validate(); err != nil {
-		return "", err
-	}
-
 	id, err := postgr.Insert(p)
 	if err != nil {
 		return "", err
@@ -28,20 +24,29 @@ func CheckIfNicknameExists(nickname string) (bool, error) {
 	return exists, nil
 }
 
-// func GetPersonById(id string) (*entity.Person, error) {
-// 	p, err := r.FindByID(id)
-// 	if err != nil {
-// 		return nil, err
-// 	}
+func GetPersonById(id string) (*entity.Person, error) {
+	p, err := postgr.FindByID(id)
+	if err != nil {
+		return nil, err
+	}
 
-// 	return p, nil
-// }
+	return p, nil
+}
 
-// func CountPersons() (int, error) {
-// 	count, err := r.Count()
-// 	if err != nil {
-// 		return 0, err
-// 	}
+func CountPersons() (int, error) {
+	count, err := postgr.Count()
+	if err != nil {
+		return 0, err
+	}
 
-// 	return count, nil
-// }
+	return count, nil
+}
+
+func FindByText(text string) ([]*entity.Person, error) {
+	persons, err := postgr.FindByText(text)
+	if err != nil {
+		return nil, err
+	}
+
+	return persons, nil
+}

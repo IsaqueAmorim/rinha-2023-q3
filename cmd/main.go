@@ -8,7 +8,10 @@ import (
 func main() {
 	app := fiber.New()
 
-	app.Post("/person", handlers.CreatePerson)
+	app.Post("/pessoas", handlers.CreatePerson)
+	app.Get("/pessoas/:id", handlers.FindPersonById)
+	app.Get("/pessoas", handlers.FindByText)
+	app.Get("/contagem-pessoas", handlers.CountPersons)
 	app.Listen(":8080")
 
 }

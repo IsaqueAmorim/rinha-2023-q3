@@ -1,12 +1,24 @@
 services:
-  web:
-    build: 
-      context: .
-      dockerfile: ./dockerfile
-    ports:
-      - "8080:8080"
+  web1:
+    build: .
+    restart: always
+    hostname: web1
+    expose:
+      - 8080
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+
+  web2:
+    build: .
+    restart: always
+    hostname: web2
+    expose:
+      - 8080
+    depends_on:
+      db:
+        condition: service_healthy
+      
   
   db:
     image: postgres
@@ -17,3 +29,19 @@ services:
       POSTGRES_PASSWORD: admin
     ports:
       - "5432:5432"
+    expose:
+      - "5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 15s
+      timeout: 25s
+
+  nginx:
+    image: nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - web1
+      - web2
+    ports:
+      - "9999:9999"

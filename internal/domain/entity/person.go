@@ -11,10 +11,10 @@ import (
 
 type Person struct {
 	ID        string    `json:"id"`
-	Nickname  string    `json:"apelido"`
-	Name      string    `json:"nome"`
-	Birthdate time.Time `json:"nascimento"`
-	Stack     []string  `json:"stack"`
+	Nickname  string    `json:"apelido" validate:"required, max=32"`
+	Name      string    `json:"nome" validate:"required, max=100"`
+	Birthdate time.Time `json:"nascimento" validate:"required,datetime=2006-01-02"`
+	Stack     []string  `json:"stack" validate:"dive,max=32"`
 }
 
 func NewPerson(p *dtos.PersonRequest) *Person {
@@ -39,6 +39,10 @@ func (p *Person) Validate() error {
 	}
 	if strings.TrimSpace(p.Nickname) == "" {
 		return errors.New("Nickname is required")
+	}
+	dateLayout := "2006-01-02"
+	if _, err := time.Parse(dateLayout, p.Birthdate.Format(dateLayout)); err != nil {
+		return errors.New("Invalid date format")
 	}
 
 	return nil

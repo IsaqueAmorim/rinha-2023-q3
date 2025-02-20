@@ -13,15 +13,17 @@ func CreatePerson(c *fiber.Ctx) error {
 		return err
 	}
 
-	exists, err := service.CheckIfNicknameExists(person.Nickname)
-
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+	if err = person.Validate(); err != nil {
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
 			"error": err.Error(),
 		})
 	}
 
-	if exists {
+	if exists, err := service.CheckIfNicknameExists(person.Nickname); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	} else if exists {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
 			"error": "Nickname already exists",
 		})
@@ -52,9 +54,4 @@ func parseJsonToPerson(c *fiber.Ctx) (*entity.Person, error) {
 	}
 
 	return person, nil
-}
-
-func checkIfNicknameExists(c *fiber.Ctx, nickname string) error {
-
-	return nil
 }
