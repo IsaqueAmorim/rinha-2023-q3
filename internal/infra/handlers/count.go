@@ -9,7 +9,7 @@ import (
 )
 
 func CountPersons(c *fiber.Ctx) error {
-	_, err := service.CountPersons()
+	count, err := service.CountPersons()
 
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -19,7 +19,5 @@ func CountPersons(c *fiber.Ctx) error {
 
 	fmt.Println(os.Getpid())
 
-	host, _ := os.Hostname()
-
-	return c.Status(fiber.StatusOK).JSON(host)
+	return c.Status(fiber.StatusOK).JSON(count)
 }

@@ -7,13 +7,15 @@ import (
 )
 
 func CreatePerson(c *fiber.Ctx) error {
-	person, err := parseJsonToPerson(c)
+	var person *entity.Person
 
-	if err != nil {
-		return err
+	if err := c.BodyParser(&person); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
 	}
 
-	if err = person.Validate(); err != nil {
+	if err := person.Validate(); err != nil {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
 			"error": err.Error(),
 		})
@@ -42,16 +44,4 @@ func CreatePerson(c *fiber.Ctx) error {
 		"id":      id,
 		"message": "Person created successfully",
 	})
-}
-
-func parseJsonToPerson(c *fiber.Ctx) (*entity.Person, error) {
-	var person *entity.Person
-
-	if err := c.BodyParser(&person); err != nil {
-		return nil, c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": err.Error(),
-		})
-	}
-
-	return person, nil
 }
